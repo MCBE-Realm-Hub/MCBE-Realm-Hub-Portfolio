@@ -1,0 +1,123 @@
+<--
+title: Sell pad
+tags: commands, sell pad, function
+-->
+
+# Sell pad
+Sell pads have been a popular concept in the realm community for a while. Whether it's for a Skyblock realm **or** Factions realm, it's always been an amazing feature to add! The basic concept of a sell pad is that whenever you stand on top of a block, the **sellable** items that are available in your inventory will be removed and in return you will be given score to an objective, which is usually **currencies** in the realm.
+
+:::caution
+This sell pad version uses a new beta command parameter called `haditem`. So, you will need to be on Minecraft Bedrock - Beta 1.18.20.21.
+:::
+
+### Add your objective
+
+:::note
+Please make sure your default in game currency scoreboard is being used in this system.
+:::
+
+<CodeHeader>BP/functions/sell_pad/main.mcfunction</CodeHeader>
+
+```
+scoreboard objectives add money dummy
+scoreboard players add @a money 0
+```
+
+### Add "sell" tag to players standing on a beacon block
+<CodeHeader>BP/functions/sell_pad/main.mcfunction</CodeHeader>
+
+```
+scoreboard objectives add money dummy
+scoreboard players add @a money 0
+
+tag @a remove sell
+execute @a ~~~ detect ~~-1~ beacon 0 tag @s add sell
+```
+
+### Execute an function if the player has "sell" tag and has dirt to sell from their inventory
+<CodeHeader>BP/functions/sell_pad/main.mcfunction</CodeHeader>
+
+```
+scoreboard objectives add money dummy
+scoreboard players add @a money 0
+
+tag @a remove sell
+execute @a ~~~ detect ~~-1~ beacon 0 tag @s add sell
+
+execute @p[tag=sell,hasitem={item=dirt}] ~~~ detect ~~-1~ beacon 0 function sell_pad/item/dirt
+```
+
+### Add an function file to give players score in an objective and clear item
+
+:::note
+Every item will need to have their own seperate function file.
+:::
+
+<CodeHeader>BP/functions/sell_pad/item/dirt.mcfunction</CodeHeader>
+
+```
+scoreboard players add @s money 1
+clear @s dirt 0 1
+```
+
+<!-- Multipliers -->
+
+# Multipliers
+
+:::tip
+You can make a system which lets you multiply the **score** you get from selling your items on the sell pad!
+:::
+
+### Add 4 objectives
+* When a player sells items, it will increase this score, NOT the original scoreboard. Use this objective in sell shop or sell pad! 
+  ```
+  scoreboard objectives add MoneySell dummy
+  ```
+:::note
+Please make sure your default in game currency scoreboard is being used in this system.
+:::
+* Your regular Money scoreboard. The objective you use as your games currency.
+  ```
+  scoreboard objectives add money dummy
+  ```
+* Your score multiplier
+  ```
+  scoreboard objectives add multiplier dummy
+  ```
+* Used to store values of the calculations
+  ```
+  scoreboard objectives add integer dummy
+  ```
+
+### How does multipliers work?
+When you sell items it increases your score for objective "MoneySell", then it converts to money based on your multiplier!
+
+## Integer multipliers
+```
+execute @a ~~~ scoreboard players operation @s MoneySell *= @s multiplier
+execute @a ~~~ scoreboard players operation @s money += @s MoneySell
+scoreboard players set @a MoneySell 0
+```
+
+### Display integer multipliers
+```
+tellraw @s {"rawtext":[{"text":"Your Multiplier: x"},{"score":{"name":"@s","objective":"multiplier"}}]}
+```
+
+## Decimal multipliers
+These commands above will support multipliers in increments of 0.1. If you have a multiplier score of 24, then your actual multiplier is 2.4 because you are dividing your MoneySell score by 10.
+```
+execute @a ~~~ scoreboard players operation @s MoneySell *= @s multiplier
+execute @a ~~~ scoreboard players operation @s money += @s MoneySell
+scoreboard players set @a MoneySell 0
+```
+
+### Display decimal multipliers in increments of 0.1
+```
+scoreboard players set ten integer 10
+execute @a ~~~ scoreboard players operation @s multiplierWhole = @s multiplier
+execute @a ~~~ scoreboard players operation @s multiplierWhole /= ten integer
+execute @a ~~~ scoreboard players operation @s multiplierDecimal = @s multiplier
+execute @a ~~~ scoreboard players operation @s multiplierDecimal %= ten integer
+tellraw @s {"rawtext":[{"text":"Your Multiplier: x"},{"score":{"name":"@s","objective":"multiplierWhole"}},{"text":"."},{"score":{"name":"@s","objective":"multiplierDecimal"}}]}
+```
