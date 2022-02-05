@@ -1,12 +1,13 @@
 <--
 title: Sell pad
 tags: commands, sell pad, function
+author: Dooka#0001
 -->
 
-# Sell pad
+# Sell pads
 Sell pads have been a popular concept in the realm community for a while. Whether it's for a Skyblock realm **or** Factions realm, it's always been an amazing feature to add! The basic concept of a sell pad is that whenever you stand on top of a block, the **sellable** items that are available in your inventory will be removed and in return you will be given score to an objective, which is usually **currencies** in the realm.
 
-:::caution
+:::warning
 This sell pad version uses a new beta command parameter called `haditem`. So, you will need to be on Minecraft Bedrock - Beta 1.18.20.21.
 :::
 
@@ -16,17 +17,14 @@ This sell pad version uses a new beta command parameter called `haditem`. So, yo
 Please make sure your default in game currency scoreboard is being used in this system.
 :::
 
-<CodeHeader>BP/functions/sell_pad/main.mcfunction</CodeHeader>
-
-```
+```_ BP/functions/sell_pad/main.mcfunction
 scoreboard objectives add money dummy
 scoreboard players add @a money 0
 ```
 
 ### Add "sell" tag to players standing on a beacon block
-<CodeHeader>BP/functions/sell_pad/main.mcfunction</CodeHeader>
 
-```
+```_ BP/functions/sell_pad/main.mcfunction
 scoreboard objectives add money dummy
 scoreboard players add @a money 0
 
@@ -35,9 +33,8 @@ execute @a ~~~ detect ~~-1~ beacon 0 tag @s add sell
 ```
 
 ### Execute an function if the player has "sell" tag and has dirt to sell from their inventory
-<CodeHeader>BP/functions/sell_pad/main.mcfunction</CodeHeader>
 
-```
+```_ BP/functions/sell_pad/main.mcfunction
 scoreboard objectives add money dummy
 scoreboard players add @a money 0
 
@@ -53,9 +50,7 @@ execute @p[tag=sell,hasitem={item=dirt}] ~~~ detect ~~-1~ beacon 0 function sell
 Every item will need to have their own seperate function file.
 :::
 
-<CodeHeader>BP/functions/sell_pad/item/dirt.mcfunction</CodeHeader>
-
-```
+```_ BP/functions/sell_pad/item/dirt.mcfunction
 scoreboard players add @s money 1
 clear @s dirt 0 1
 ```
@@ -73,9 +68,6 @@ You can make a system which lets you multiply the **score** you get from selling
   ```
   scoreboard objectives add MoneySell dummy
   ```
-:::note
-Please make sure your default in game currency scoreboard is being used in this system.
-:::
 * Your regular Money scoreboard. The objective you use as your games currency.
   ```
   scoreboard objectives add money dummy
